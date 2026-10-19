@@ -1,5 +1,7 @@
 require 'dm-core'
+require 'active_support'                             # ActiveSupport >= 7.1: before any core_ext
 require 'active_support/core_ext/module/delegation'  # needed by active_model/naming
+require 'active_support/core_ext/class/attribute'    # needed by active_model/conversion (>= 7.1)
 require 'active_support/concern'                     # needed by active_model/conversion
 require 'active_model/naming'
 require 'active_model/conversion'
@@ -8,6 +10,9 @@ module DataMapper
   module ActiveModel
 
     module InstanceMethods
+      # A Concern so ActiveModel::Conversion is included in the model class: since
+      # ActiveModel 7.1 its `included` block calls class_attribute, which a module lacks.
+      extend ActiveSupport::Concern
       include ::ActiveModel::Conversion
 
       def to_model
